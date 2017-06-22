@@ -2,6 +2,7 @@ package com.yomii.basic
 
 import org.junit.Test
 
+
 /**
  * 基础语法
  *
@@ -19,10 +20,13 @@ class Syntax {
 
         printSum(3, 5)
 
-        //definingLocalVariables()
-        //equals()
-        arrays()
+        //maxOf()
+        //maybeNull()
+        //useWhen()
+        //useFor()
+        useWhile()
     }
+
 
     /**
      * 两个Int 相加 返回 Int
@@ -45,56 +49,112 @@ class Syntax {
      * }
      */
     fun printSum(a: Int, b: Int) {
+        //字符串中可以通过'$'符号引用变量, ${}作为函数
         println("sum of $a and $b is ${a + b}")
     }
 
+    /**
+     * 使用条件表达式的推断返回值类型写法
+     */
+    fun maxOf(a: Int, b: Int) = if (a > b) a else b
 
-    fun definingLocalVariables() {
-        /*
-         * var 代表可变变量, val代表不可变变量(只读)
-         *
-         * 在直接赋值时, 类型可自动推断, 无需写类型
-         *
-         */
-        var a: Int = 5
 
-        var b: Int
+    /**
+     * 使用条件表达式赋值并判断非空
+     */
+    fun maybeNull() {
+        val intArray = IntArray(5, { i -> i })
+        var a: Int?
+        for (number in intArray) {
+            a = if (number % 2 == 0) {
+                println("双数, 赋值")
+                number
+            } else {
+                println("单数, null")
+                null
+            }
 
-        if (a == 5)
-            b = 6
-        else
-            b = 1
-
-        val c = 999
-
-        println("a = $a, b = ${++b}, c = $c")
-
-    }
-
-    fun equals() {
-        val a: Int = 10000
-        println(a === a) // 输出“true”
-        val boxedA: Int? = a
-        val anotherBoxedA: Int? = a
-        println(boxedA == anotherBoxedA)
-        println(boxedA === anotherBoxedA) // ！！！输出“false”！！！
-    }
-
-    fun arrays(){
-
-        /*我们可以使用库函数 arrayOf() 来创建一个数组并传递元素值给它，这样 arrayOf(1, 2, 3) 创建了 array [1, 2, 3]。
-        或者，库函数 arrayOfNulls() 可以用于创建一个指定大小、元素都为空的数组。*/
-
-        val arrayOf = arrayOf(1, 2, 3)
-        val arrayOfNulls = arrayOfNulls<Int>(5)
-
-        /*该构造第一个参数是size, 第二个参数是一个lamb函数, 入参 i 代表数组index
-         *返回给定index的每个元素初始值
-         */
-        val arr = Array(3,{i -> i })
-
-        for (i in arr) {
-            println(i)
+            if (a != null)
+                println(a * 5)
         }
+    }
+
+
+    fun useWhen() {
+
+        val a = 5;
+        val validNumbers = listOf<Int>(1, 2, 3, 4, 5)
+        when (a) {
+            is Int -> println("x is Int")
+            in 1..10 -> println("x is in the range 1 to 10")
+            !in 10..20 -> println("x is outside the range 10 to 20")
+            in validNumbers -> println("x is valid")
+            else -> println("none of the above")
+        }
+
+        for (x in 2..10 step 2) {
+            println(x)
+        }
+
+        /*每个 `->` 代表一个分支, 如果很多分支需要用相同的方式处理，则可以把多个分支条件放在一起，用逗号分隔*/
+        when (a) {
+            0, 1 -> println("a == 0 or a == 1")
+            else -> println("otherwise")
+        }
+
+
+        /*如果其他分支都不满足条件将会求值 else 分支(类似原来的default)。 如果 when 作为一个表达式使用，则必须有 else 分支， 除非编译器能够检测出所有的可能情况都已经覆盖了。*/
+        fun hasPrefix(x: Any) = when (x) {
+            is String -> x.startsWith("prefix")
+            else -> false
+        }
+
+        val str = "prefix-Something"
+        if (hasPrefix(str))
+            println("$str has prefix")
+
+        /*如果不提供参数，所有的分支条件都是简单的布尔表达式，而当一个分支的条件为真时则执行该分支*/
+        when {
+            a > 0 -> println("a > 0")
+            a == 0 -> println("a == 0")
+            else -> println("a < 0")
+        }
+
+    }
+
+    fun useFor() {
+
+        val list = listOf<Int>(1, 2, 3, 4, 5)
+        //类似Java的增强For, 使用迭代器, **对于数组的for会自动编译为使用索引的循环**
+        for (item in list) print(item)
+        println()
+        //如果你想要通过索引遍历一个数组或者一个 list, 使用如下格式
+        for (i in list.indices) {
+            print(list[i])
+        }
+        println()
+        //或者可以用库函数 withIndex
+        for ((index, value) in list.withIndex()) {
+            println("the element at $index is $value")
+        }
+    }
+
+
+    fun useWhile() {
+
+        // while 正常使用
+
+        var x = 3
+
+        while (x-- > 0) {
+            print(x)
+        }
+
+        fun retrieveData() = x++
+
+        do {
+            val y = retrieveData()
+            print(y)
+        } while (y < 3) // y 在此处可见
     }
 }
